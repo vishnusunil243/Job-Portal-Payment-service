@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Verified</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f0f0f0;
+    }
+    .container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      animation: fadein 2s;
+    }
+    .checkmark {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-color: #4CAF50;
+      color: #fff;
+      font-size: 60px;
+      line-height: 100px;
+      text-align: center;
+      animation: bounce 0.5s infinite alternate;
+    }
+    @keyframes bounce {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-10px); }
+    }
+    @keyframes fadein {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <i class="checkmark">&#10004;</i>
+    <h2>Payment Verified</h2>
+    <p>Your payment has been successfully processed.</p>
+    <p>Thank you for your support!</p>
+  </div>
+</body>
+</html>
