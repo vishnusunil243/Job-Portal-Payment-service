@@ -29,6 +29,9 @@ func (p *PaymentUsecase) AddSubscriptionPlan(req entities.Subscription) error {
 	}
 	return nil
 }
+func (p *PaymentUsecase) UpdateSubscriptionPlan(req entities.Subscription) error {
+	return p.adapters.UpdateSubscriptionPlan(req)
+}
 func (p *PaymentUsecase) GetAllSubscriptionPlans() ([]entities.Subscription, error) {
 	return p.adapters.GetAllSubscriptionPlans()
 }
@@ -57,4 +60,7 @@ func (p *PaymentUsecase) AddUserSubscription(userId, subId, duration string) err
 }
 func (p *PaymentUsecase) GetUserSubscription(userId string) (entities.UserSubscription, error) {
 	return p.adapters.GetUserSubscription(userId)
+}
+func (p *PaymentUsecase) GetSubscriptionByDuration(duration string) (entities.Subscription, error) {
+	return p.adapters.GetSubscriptionByDuration(duration)
 }

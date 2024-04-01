@@ -12,6 +12,7 @@ import (
 	"github.com/razorpay/razorpay-go"
 	"github.com/vishnusunil243/Job-Portal-Payment-service/entities"
 	"github.com/vishnusunil243/Job-Portal-Payment-service/helperstruct"
+	"github.com/vishnusunil243/Job-Portal-Payment-service/internal/helper"
 	"github.com/vishnusunil243/Job-Portal-Payment-service/internal/usecase"
 	"github.com/vishnusunil243/Job-Portal-Payment-service/kafka"
 	"github.com/vishnusunil243/Job-Portal-proto-files/pb"
@@ -98,6 +99,13 @@ func (p *PaymentService) verifyPayment(c *gin.Context) {
 	}
 	// idStr := c.Query("plan_id")
 	// planId := strings.ReplaceAll(idStr, " ", "")
+	if paymentRef == "" {
+		c.JSON(http.StatusBadRequest, helperstruct.Response{
+			StatusCode: 400,
+			Message:    "payment failed",
+		})
+		return
+	}
 	if err := p.usecases.AddPayment(entities.Payment{
 		UserId:     userID,
 		PaymentRef: paymentRef,
@@ -171,6 +179,40 @@ func (p *PaymentService) addSubscriptionPlan(c *gin.Context) {
 		})
 		return
 	}
+
+	if !helper.IsValidDuration(req.Duration) {
+		c.JSON(http.StatusBadRequest, helperstruct.Response{
+			StatusCode: 400,
+			Message:    "invalid duration",
+			Error:      "please enter a valid duration",
+		})
+		return
+	}
+	check, err := p.usecases.GetSubscriptionByDuration(req.Duration)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, helperstruct.Response{
+			StatusCode: 400,
+			Message:    "error adding subscription plan",
+			Error:      err.Error(),
+		})
+		return
+	}
+	if check.Duration != "" {
+		c.JSON(http.StatusBadRequest, helperstruct.Response{
+			StatusCode: 400,
+			Message:    "plan for this duration is already present please add a new plan",
+			Error:      "plan for this duration is already present please add a new plan",
+		})
+		return
+	}
+	if helper.IsNegative(req.Amount) {
+		c.JSON(http.StatusBadRequest, helperstruct.Response{
+			StatusCode: 400,
+			Message:    "invalid amount",
+			Error:      "please enter a valid amount",
+		})
+		return
+	}
 	if err := p.usecases.AddSubscriptionPlan(req); err != nil {
 		c.JSON(http.StatusBadRequest, helperstruct.Response{
 			StatusCode: 400,
@@ -182,6 +224,55 @@ func (p *PaymentService) addSubscriptionPlan(c *gin.Context) {
 	c.JSON(http.StatusOK, helperstruct.Response{
 		StatusCode: 200,
 		Message:    "plan added successfully",
+	})
+}
+func (p *PaymentService) updateSubscriptionPlan(c *gin.Context) {
+	var req entities.Subscription
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, &helperstruct.Response{
+			StatusCode: 400,
+			Message:    "error binding json",
+			Error:      err.Error(),
+		})
+		return
+	}
+	if !helper.IsValidDuration(req.Duration) {
+		c.JSON(http.StatusBadRequest, helperstruct.Response{
+			StatusCode: 400,
+			Message:    "invalid duration",
+			Error:      "please enter a valid duration",
+		})
+		return
+	}
+	if helper.IsNegative(req.Amount) {
+		c.JSON(http.StatusBadRequest, helperstruct.Response{
+			StatusCode: 400,
+			Message:    "invalid amount",
+			Error:      "please enter a valid amount",
+		})
+		return
+	}
+	subId := c.Query("sub_id")
+	sId, err := uuid.Parse(subId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, helperstruct.Response{
+			StatusCode: 400,
+			Message:    "error parsing subscription id",
+			Error:      err.Error(),
+		})
+	}
+	req.Id = sId
+	if err := p.usecases.UpdateSubscriptionPlan(req); err != nil {
+		c.JSON(http.StatusBadRequest, helperstruct.Response{
+			StatusCode: 400,
+			Message:    "error updating subscription plan",
+			Error:      err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, helperstruct.Response{
+		StatusCode: 200,
+		Message:    "subscription plan updated successfully",
 	})
 }
 func (p *PaymentService) getAllSubscriptionPlans(c *gin.Context) {

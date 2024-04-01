@@ -3,6 +3,7 @@ package cronjobs
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/robfig/cron"
 	"github.com/vishnusunil243/Job-Portal-Payment-service/entities"
@@ -29,7 +30,7 @@ func NewCronJob(service *service.PaymentService, db *gorm.DB) *CronJob {
 }
 func (c *CronJob) Start() {
 	cron := cron.New()
-	err := cron.AddFunc("12 33 * * *", func() {
+	err := cron.AddFunc("12 00 * * *", func() {
 		c.CheckSubscriptions()
 	})
 	if err != nil {
@@ -38,10 +39,10 @@ func (c *CronJob) Start() {
 	cron.Start()
 }
 func (c *CronJob) CheckSubscriptions() {
-	// tomorrow := time.Now().AddDate(0, 0, 1).Format("2006-01-02")
+	tomorrow := time.Now().AddDate(0, 0, 1).Format("2006-01-02")
 	var usersubscriptions []entities.UserSubscription
-	selectQuery := `SELECT * FROM user_subscriptions `
-	if err := c.DB.Raw(selectQuery).Scan(&usersubscriptions).Error; err != nil {
+	selectQuery := `SELECT * FROM user_subscriptions WHERE DATE(subscribed_till)=$1`
+	if err := c.DB.Raw(selectQuery, tomorrow).Scan(&usersubscriptions).Error; err != nil {
 		log.Print("error while performing cron jobs ", err)
 	}
 	for _, usrSub := range usersubscriptions {

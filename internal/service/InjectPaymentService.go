@@ -28,8 +28,9 @@ func (engine *PaymentEngine) Start(addr string) {
 
 	handler := c.Handler(r)
 	r.GET("/plans", engine.Srv.getAllSubscriptionPlans)
-	r.POST("/subscribe", engine.Srv.addSubscriptionPlan)
-	r.GET("/subscribe/payment", engine.Srv.subscriptionPayment)
+	r.POST("/subscriptions", engine.Srv.addSubscriptionPlan)
+	r.PATCH("/subscriptions", engine.Srv.updateSubscriptionPlan)
+	r.GET("/subscriptions/payment", engine.Srv.subscriptionPayment)
 	r.GET("/payment/verify", engine.Srv.verifyPayment)
 	r.GET("/payment/verified", engine.Srv.servePaymentSuccessPage)
 	r.LoadHTMLGlob("*.html")

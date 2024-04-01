@@ -36,6 +36,13 @@ func (p *PaymentAdapter) AddSubscriptionPlan(req entities.Subscription) error {
 	}
 	return nil
 }
+func (p *PaymentAdapter) UpdateSubscriptionPlan(req entities.Subscription) error {
+	updateSubscriptionPlanQuery := `UPDATE subscriptions SET amount=$1,duration=$2 WHERE id=$3`
+	if err := p.DB.Exec(updateSubscriptionPlanQuery, req.Amount, req.Duration, req.Id).Error; err != nil {
+		return err
+	}
+	return nil
+}
 func (p *PaymentAdapter) GetAllSubscriptionPlans() ([]entities.Subscription, error) {
 	selectQuery := `SELECT * FROM subscriptions`
 	var res []entities.Subscription
@@ -86,6 +93,14 @@ func (p *PaymentAdapter) GetUserSubscription(userId string) (entities.UserSubscr
 	selectQuery := `SELECT * FROM user_subscriptions WHERE user_id=?`
 	if err := p.DB.Raw(selectQuery, userId).Scan(&res).Error; err != nil {
 		return entities.UserSubscription{}, err
+	}
+	return res, nil
+}
+func (p *PaymentAdapter) GetSubscriptionByDuration(duration string) (entities.Subscription, error) {
+	var res entities.Subscription
+	selectQuery := `SELECT * FROM subscriptions WHERE duration=?`
+	if err := p.DB.Raw(selectQuery, duration).Scan(&res).Error; err != nil {
+		return entities.Subscription{}, err
 	}
 	return res, nil
 }
