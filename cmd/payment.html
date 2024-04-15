@@ -79,14 +79,14 @@
         $.ajax({
 
             //passes details as url params
-            url: `http://localhost:8080/payment/verify?user_id=${userid}&payment_ref=${res.razorpay_payment_id}&order_id=${orderData}
+            url: `http://apigateway:8080/payment/verify?user_id=${userid}&payment_ref=${res.razorpay_payment_id}&order_id=${orderData}
       &signature=${res.razorpay_signature}&id=${orderid}&total=${total}&plan_id=${planId}`,
             method: 'GET',
 
             success: (response) => {
                 console.log(response)
                 if (response.data){
-                    location.href = 'http://localhost:8080/payment/verified'
+                    location.href = 'http://apigateway:8080/payment/verified'
                 }
             }
         })
