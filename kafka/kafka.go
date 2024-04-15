@@ -27,7 +27,7 @@ func ProduceWarningSubscriptionEndingMessage(email string) error {
 	config.Producer.Return.Successes = true
 	config.Producer.Partitioner = NewFixedPartitioner()
 
-	producer, err := sarama.NewSyncProducer([]string{"localhost:9092"}, config)
+	producer, err := sarama.NewSyncProducer([]string{"apache-kafka-service:9092"}, config)
 	if err != nil {
 		log.Print("failed to create producer ", err)
 		return err
@@ -57,7 +57,7 @@ func SubscribedMessage(email, duration string) error {
 	config.Producer.Return.Successes = true
 	config.Producer.Partitioner = NewFixedPartitioner()
 
-	producer, err := sarama.NewSyncProducer([]string{"localhost:9092"}, config)
+	producer, err := sarama.NewSyncProducer([]string{"apache-kafka-service:9092"}, config)
 	if err != nil {
 		log.Print("failed to create producer ", err)
 		return err
