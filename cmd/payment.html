@@ -79,7 +79,7 @@
         $.ajax({
 
             //passes details as url params
-            url: `http://apigateway:8080/payment/verify?user_id=${userid}&payment_ref=${res.razorpay_payment_id}&order_id=${orderData}
+            url: `/payment/verify?user_id=${userid}&payment_ref=${res.razorpay_payment_id}&order_id=${orderData}
       &signature=${res.razorpay_signature}&id=${orderid}&total=${total}&plan_id=${planId}`,
             method: 'GET',
 
