@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"crypto/tls"
 	"log"
 	"net/http"
 	"os"
@@ -65,7 +66,7 @@ func (p *PaymentService) subscriptionPayment(c *gin.Context) {
 		"currency": "INR",
 		"receipt":  "test_receipt_id",
 	}
-    http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	body, err := client.Order.Create(data, nil)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, helperstruct.Response{
