@@ -74,23 +74,22 @@
     }
 
     function verifyPayment(res, userid, orderid) {
-        const urlParams = new URLSearchParams(window.location.search);
-    const planId = urlParams.get('plan_id');
-        $.ajax({
+  const urlParams = new URLSearchParams(window.location.search);
+  const planId = urlParams.get('plan_id');
+  const orderData = orderid; // Assign the value of orderid to orderData
 
-            //passes details as url params
-            url: `https://pcforu.online/payment/verify?user_id=${userid}&payment_ref=${res.razorpay_payment_id}&order_id=${orderData}
-      &signature=${res.razorpay_signature}&id=${orderid}&total=${total}&plan_id=${planId}`,
-            method: 'GET',
-
-            success: (response) => {
-                console.log(response)
-                if (response.data){
-                    location.href = 'https://pcforu.online/payment/verified'
-                }
-            }
-        })
+  $.ajax({
+    //passes details as url params
+    url: `https://pcforu.online/payment/verify?user_id=${userid}&payment_ref=${res.razorpay_payment_id}&order_id=${orderData}&signature=${res.razorpay_signature}&id=${orderid}&total=${total}&plan_id=${planId}`,
+    method: 'GET',
+    success: (response) => {
+      console.log(response);
+      if (response.data) {
+        location.href = 'https://pcforu.online/payment/verified';
+      }
     }
+  });
+}
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
